@@ -1,0 +1,290 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "ElasticSearch Infrastructure",
+  "Parameters": {
+    "StackName": {
+      "Description": "Logical name (environment-application-role) for this CF stack",
+      "Type": "String"
+    },"Environment": {
+      "Description": "Logical name (environment) for this CF stack",
+      "Type": "String"
+    },"Application": {
+      "Description": "Logical name (Application) for this CF stack",
+      "Type": "String"
+    },
+    "VPCStack": {
+      "Description": "CF stack name for your existing Virtual Private Cloud",
+      "Type": "String"
+    },
+    "InstanceType": {
+      "Description": "The EC2 instance type to use",
+      "Type": "String",
+      "Default": "db.t2.medium",
+      "AllowedValues": [
+        "t2.micro.elasticsearch",
+        "t2.small.elasticsearch",
+        "t2.medium.elasticsearch",
+        "m4.large.elasticsearch",
+        "m4.xlarge.elasticsearch",
+        "m4.2xlarge.elasticsearch",
+        "m4.4xlarge.elasticsearch",
+        "m4.10xlarge.elasticsearch",
+        "c4.large.elasticsearch",
+        "c4.xlarge.elasticsearch",
+        "c4.2xlarge.elasticsearch",
+        "c4.4xlarge.elasticsearch",
+        "c4.8xlarge.elasticsearch",
+        "r4.large.elasticsearch",
+        "r4.xlarge.elasticsearch",
+        "r4.2xlarge.elasticsearch",
+        "r4.4xlarge.elasticsearch",
+        "r4.8xlarge.elasticsearch",
+        "r4.16xlarge.elasticsearch",
+        "r3.large.elasticsearch",
+        "r3.xlarge.elasticsearch",
+        "r3.2xlarge.elasticsearch",
+        "r3.4xlarge.elasticsearch",
+        "r3.8xlarge.elasticsearch"
+      ],
+      "ConstraintDescription": "Must be a valid EC2 instance type."
+    },
+    "InstanceCount": {
+      "Description": "ElasticSearch instance cont",
+      "Type": "Number"
+    },
+    "VolumeSize": {
+      "Description": "ElasticSearch volume size",
+      "Type": "Number"
+    },
+    "AvailabilityZone" : {
+      "Type" : "String"
+    }
+  },
+  "Resources": {
+    "ElasticsearchDomain": {
+      "Type": "AWS::Elasticsearch::Domain",
+      "Properties": {
+        "DomainName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "StackName"
+              },
+              "-ElasticSearch"
+            ]
+          ]
+        },
+        "ElasticsearchVersion": "6.4",
+        "ElasticsearchClusterConfig": {
+          "InstanceCount": { "Ref": "InstanceCount" },
+          "InstanceType": { "Ref": "InstanceType" },
+          "DedicatedMasterEnabled": false,
+          "ZoneAwarenessEnabled": false
+        },
+        "EBSOptions": {
+          "EBSEnabled" : "true",
+          "Iops" : 0,
+          "VolumeSize" : { "Ref": "VolumeSize"},
+          "VolumeType" : "standard"
+        },
+        "SnapshotOptions": {
+          "AutomatedSnapshotStartHour": "0"
+        },
+        "AccessPolicies": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Deny",
+            "Principal": {
+              "AWS": "*"
+            },
+            "Action": "es:*",
+            "Resource": "*"
+          }]
+        },
+        "AdvancedOptions": {
+          "rest.action.multi.allow_explicit_index": "true"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "StackName"
+                  },
+                  "-ElasticSearchDomain"
+                ]
+              ]
+            }
+          }
+        ],
+        "VPCOptions" : {
+          "SubnetIds" : [
+            {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${VPCStack}-SubnetAPriv"
+              }
+            },
+            {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${VPCStack}-SubnetBPriv"
+              }
+            },
+            {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${VPCStack}-SubnetCPriv"
+              }
+            }
+          ],
+          "SecurityGroupIds" : [
+            {"Ref" : "ESSecurityGroup"}
+          ]
+        }
+      }
+    },
+    "ESSubnet" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${VPCStack}-VPC"
+          }
+        },
+        "CidrBlock" : {"Ref" : "CidrBlock"},
+        "AvailabilityZone" : {"Ref" : "AvailabilityZone"}
+      }
+    },
+    "ESSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "ElasticSearch security group",
+        "VpcId": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${VPCStack}-VPC"
+          }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "StackName"
+                  },
+                  "-ElasticSearchSecurityGroup"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "ESSecurityIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "ESSecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "443",
+        "ToPort": "443",
+        "CidrIp": "10.0.0.0/16"
+      }
+    },
+    "ESSecurityEgress": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "ESSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "ElasticSearchPrimaryDNS" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "HostedZoneName" : {"Fn::Join":
+        [ "",
+          [
+            { "Fn::ImportValue": {"Fn::Sub": "${VPCStack}-PrimaryDomain"} },
+            "."
+          ]
+        ]
+        },
+        "Name" : {
+          "Fn::Join": [
+            "",
+            [
+              {"Fn::Sub": "${Environment}-${Application}-elasticsearch."},
+              { "Fn::ImportValue": {"Fn::Sub": "${VPCStack}-PrimaryDomain"} }
+            ]
+          ]
+        },
+        "Type" : "CNAME",
+        "TTL" : "900",
+        "ResourceRecords" : [
+          { "Fn::GetAtt": [
+            "ElasticSearchDomain",
+            "Endpoint.Address"
+          ]
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "ElasticSearchDomain": {
+      "Value": {
+        "Ref": "ElasticSearchDomain"
+      },
+      "Export" : {
+        "Name" : {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "StackName"
+              },
+              "-ElasticSearch"
+            ]
+          ]
+        }
+      },
+      "Description": "Elastic Search Domain"
+    },
+    "ESPrimaryDNS": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            {"Fn::Sub": "${Environment}-${Application}-elasticsearch."},
+            { "Fn::ImportValue": {"Fn::Sub": "${VPCStack}-PrimaryDomain"} }
+          ]
+        ]
+      },
+      "Export" : {
+        "Name" : {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "StackName"
+              },
+              "-ESPrimaryDNS"
+            ]
+          ]
+        }
+      },
+      "Description": "DNS CNAME for ElasticSearch Endpoint"
+    }
+  }
+}
+
+
+

@@ -1,0 +1,23 @@
+{
+  "ES_INSTANCE_TYPE": {
+    "type": "property",
+    "key": "ES_INSTANCE_TYPE",
+    "default": "t2.medium.elasticsearch"
+  },
+  "ES_INSTANCE_COUNT": {
+    "type": "property",
+    "key": "ES_INSTANCE_COUNT",
+    "default": 1
+  },
+  "ES_VOLUME_SIZE": {
+    "type": "property",
+    "key": "ES_VOLUME_SIZE",
+    "default": 10,
+  },
+  "ES_AVAILABILITY_ZONE": {
+    "type": "property",
+    "key": "ES_AVAILABILITY_ZONE",
+    "default": "us-west-2",
+  }
+}
+  
