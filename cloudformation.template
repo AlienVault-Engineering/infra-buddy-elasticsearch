@@ -71,7 +71,7 @@
               {
                 "Ref": "StackName"
               },
-              "-ElasticSearch"
+              "-es"
             ]
           ]
         },
