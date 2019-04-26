@@ -19,7 +19,7 @@
     "InstanceType": {
       "Description": "The EC2 instance type to use",
       "Type": "String",
-      "Default": "db.t2.medium",
+      "Default": "t2.medium.elasticsearch",
       "AllowedValues": [
         "t2.micro.elasticsearch",
         "t2.small.elasticsearch",
