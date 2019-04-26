@@ -145,18 +145,6 @@
         }
       }
     },
-    "ESSubnet" : {
-      "Type" : "AWS::EC2::Subnet",
-      "Properties" : {
-        "VpcId" : {
-          "Fn::ImportValue": {
-            "Fn::Sub": "${VPCStack}-VPC"
-          }
-        },
-        "CidrBlock" : {"Ref" : "CidrBlock"},
-        "AvailabilityZone" : {"Ref" : "AvailabilityZone"}
-      }
-    },
     "ESSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
