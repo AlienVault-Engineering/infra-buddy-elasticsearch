@@ -127,16 +127,6 @@
               "Fn::ImportValue": {
                 "Fn::Sub": "${VPCStack}-SubnetAPriv"
               }
-            },
-            {
-              "Fn::ImportValue": {
-                "Fn::Sub": "${VPCStack}-SubnetBPriv"
-              }
-            },
-            {
-              "Fn::ImportValue": {
-                "Fn::Sub": "${VPCStack}-SubnetCPriv"
-              }
             }
           ],
           "SecurityGroupIds" : [
