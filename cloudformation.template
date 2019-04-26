@@ -61,7 +61,7 @@
     }
   },
   "Resources": {
-    "ElasticsearchDomain": {
+    "ElasticSearchDomain": {
       "Type": "AWS::Elasticsearch::Domain",
       "Properties": {
         "DomainName": {
