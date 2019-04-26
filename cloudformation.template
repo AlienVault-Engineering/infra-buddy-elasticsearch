@@ -219,7 +219,7 @@
         "ResourceRecords" : [
           { "Fn::GetAtt": [
             "ElasticSearchDomain",
-            "Endpoint.Address"
+            "DomainEndpoint"
           ]
           }
         ]
