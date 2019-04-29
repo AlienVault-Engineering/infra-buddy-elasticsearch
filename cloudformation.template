@@ -260,6 +260,104 @@
         }
       },
       "Description": "DNS CNAME for ElasticSearch Endpoint"
+    },
+
+    "CreateESIAMRoleAdmin": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com",
+                  "ecs.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": {"Fn::Sub": "${Environment}-${Application}-elasticsearch-admin"},
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "es:*",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::GetAtt": ["ElasticSearchDomain", "Arn"]
+                  }
+                },
+                {
+                 "Action": [
+                   "es: DeleteElasticsearchDomain",
+                   "es: CreateElasticsearchDomain"
+                 ],
+                 "Effect": "Deny",
+                 "Resource": {
+                    "Fn::GetAtt": ["ElasticSearchDomain", "Arn"]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+
+    "CreateESIAMRoleRead": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com",
+                  "ecs.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": {"Fn::Sub": "${Environment}-${Application}-elasticsearch-read"},
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "es:ESHttpGet",
+                    "es:ESHttpHead",
+                    "es:ESHttpPost",
+                    "es:ESHttpPut",
+                    "es:ListDomainNames",
+                    "es:ListTags"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "ElasticSearchDomain",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   }
 }
