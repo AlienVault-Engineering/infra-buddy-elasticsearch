@@ -14,6 +14,11 @@
     "key": "ES_VOLUME_SIZE",
     "default": 10
   },
+  "ES_VOLUME_TYPE": {
+    "type": "property",
+    "key": "ES_VOLUME_TYPE",
+    "default": "gp2"
+  },
   "ES_AVAILABILITY_ZONE": {
     "type": "property",
     "key": "ES_AVAILABILITY_ZONE",

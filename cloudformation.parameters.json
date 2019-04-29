@@ -28,6 +28,10 @@
     "ParameterValue": "${ES_VOLUME_SIZE}"
   },
   {
+    "ParameterKey": "VolumeType",
+    "ParameterValue": "${ES_VOLUME_TYPE}"
+  },
+  {
     "ParameterKey": "AvailabilityZone",
     "ParameterValue": "${ES_AVAILABILITY_ZONE}"
   }

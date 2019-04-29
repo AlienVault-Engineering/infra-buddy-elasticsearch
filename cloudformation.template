@@ -56,8 +56,18 @@
       "Description": "ElasticSearch volume size",
       "Type": "Number"
     },
+    "VolumeType": {
+      "Description": "ElasticSearch volume type",
+      "Type": "String"
+    },
     "AvailabilityZone" : {
-      "Type" : "String"
+      "Type" : "String",
+      "AllowedValues": [
+        "gp2",
+        "io1",
+        "st1",
+        "sc1"
+      ]
     }
   },
   "Resources": {
@@ -86,7 +96,7 @@
           "EBSEnabled" : "true",
           "Iops" : 0,
           "VolumeSize" : { "Ref": "VolumeSize"},
-          "VolumeType" : "standard"
+          "VolumeType" : { "Ref": "VolumeType"}
         },
         "SnapshotOptions": {
           "AutomatedSnapshotStartHour": "0"
