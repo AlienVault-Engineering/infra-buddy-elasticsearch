@@ -250,7 +250,17 @@
             "PolicyDocument": {
               "Statement": [
                 {
-                  "Action": "es:*",
+                  "Action": [
+                    "es:AddTags",
+                    "es:RemoveTags",
+                    "es:ESHttpHead",
+                    "es:DescribeElasticsearchDomain",
+                    "es:ESHttpPost",
+                    "es:ESHttpGet",
+                    "es:DescribeElasticsearchDomainConfig",
+                    "es:ESHttpDelete",
+                    "es:ESHttpPut"
+                  ],
                   "Effect": "Allow",
                   "Resource": {
                     "Fn::GetAtt": ["ElasticSearchDomain", "Arn"]
@@ -291,9 +301,6 @@
                   "Action": [
                     "es:ESHttpGet",
                     "es:ESHttpHead",
-                    "es:ESHttpPost",
-                    "es:ESHttpPut",
-                    "es:ListDomainNames",
                     "es:ListTags"
                   ],
                   "Effect": "Allow",
