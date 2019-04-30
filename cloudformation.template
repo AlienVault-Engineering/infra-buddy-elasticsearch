@@ -58,16 +58,16 @@
     },
     "VolumeType": {
       "Description": "ElasticSearch volume type",
-      "Type": "String"
-    },
-    "AvailabilityZone" : {
-      "Type" : "String",
+      "Type": "String",
       "AllowedValues": [
         "gp2",
         "io1",
         "st1",
         "sc1"
       ]
+    },
+    "AvailabilityZone" : {
+      "Type" : "String"
     }
   },
   "Resources": {
