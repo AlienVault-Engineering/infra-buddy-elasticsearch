@@ -224,7 +224,7 @@
         ]
       }
     },
-    "CreateESIAMRoleAdmin": {
+    "IAMRoleAdmin": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -256,23 +256,13 @@
                     "Fn::GetAtt": ["ElasticSearchDomain", "Arn"]
                   }
                 },
-                {
-                 "Action": [
-                   "es: DeleteElasticsearchDomain",
-                   "es: CreateElasticsearchDomain"
-                 ],
-                 "Effect": "Deny",
-                 "Resource": {
-                    "Fn::GetAtt": ["ElasticSearchDomain", "Arn"]
-                  }
-                }
               ]
             }
           }
         ]
       }
     },
-    "CreateESIAMRoleRead": {
+    "IAMRoleRead": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
