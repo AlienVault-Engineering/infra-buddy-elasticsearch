@@ -94,7 +94,6 @@
         },
         "EBSOptions": {
           "EBSEnabled" : "true",
-          "Iops" : 0,
           "VolumeSize" : { "Ref": "VolumeSize"},
           "VolumeType" : { "Ref": "VolumeType"}
         },
@@ -224,54 +223,7 @@
           }
         ]
       }
-    }
-  },
-  "Outputs": {
-    "ElasticSearchDomain": {
-      "Value": {
-        "Ref": "ElasticSearchDomain"
-      },
-      "Export" : {
-        "Name" : {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "StackName"
-              },
-              "-ElasticSearch"
-            ]
-          ]
-        }
-      },
-      "Description": "Elastic Search Domain"
     },
-    "ESPrimaryDNS": {
-      "Value": {
-        "Fn::Join": [
-          "",
-          [
-            {"Fn::Sub": "${Environment}-${Application}-elasticsearch."},
-            { "Fn::ImportValue": {"Fn::Sub": "${VPCStack}-PrimaryDomain"} }
-          ]
-        ]
-      },
-      "Export" : {
-        "Name" : {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "StackName"
-              },
-              "-ESPrimaryDNS"
-            ]
-          ]
-        }
-      },
-      "Description": "DNS CNAME for ElasticSearch Endpoint"
-    },
-
     "CreateESIAMRoleAdmin": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -320,7 +272,6 @@
         ]
       }
     },
-
     "CreateESIAMRoleRead": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -368,6 +319,53 @@
           }
         ]
       }
+    }
+  },
+
+  "Outputs": {
+    "ElasticSearchDomain": {
+      "Value": {
+        "Ref": "ElasticSearchDomain"
+      },
+      "Export" : {
+        "Name" : {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "StackName"
+              },
+              "-ElasticSearch"
+            ]
+          ]
+        }
+      },
+      "Description": "Elastic Search Domain"
+    },
+    "ESPrimaryDNS": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            {"Fn::Sub": "${Environment}-${Application}-elasticsearch."},
+            { "Fn::ImportValue": {"Fn::Sub": "${VPCStack}-PrimaryDomain"} }
+          ]
+        ]
+      },
+      "Export" : {
+        "Name" : {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "StackName"
+              },
+              "-ESPrimaryDNS"
+            ]
+          ]
+        }
+      },
+      "Description": "DNS CNAME for ElasticSearch Endpoint"
     }
   }
 }
