@@ -103,12 +103,22 @@
         "AccessPolicies": {
           "Version": "2012-10-17",
           "Statement": [{
-            "Effect": "Deny",
+            "Effect": "Allow",
             "Principal": {
-              "AWS": "*"
+              "AWS": {"Ref": "AWS::AccountId"}
             },
-            "Action": "es:*",
-            "Resource": "*"
+            "Action": [
+              "es:AddTags",
+              "es:RemoveTags",
+              "es:DescribeElasticsearchDomain",
+              "es:DescribeElasticsearchDomainConfig",
+              "es:ESHttpHead",
+              "es:ESHttpGet",
+              "es:ESHttpPost",
+              "es:ESHttpDelete",
+              "es:ESHttpPut"
+            ],
+            "Resource": {"Fn::GetAtt": ["ElasticSearchDomain", "Arn"]}
           }]
         },
         "AdvancedOptions": {
@@ -220,99 +230,6 @@
             "ElasticSearchDomain",
             "DomainEndpoint"
           ]
-          }
-        ]
-      }
-    },
-    "IAMRoleAdmin": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "ec2.amazonaws.com",
-                  "ecs.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
-        },
-        "Path": "/",
-        "Policies": [
-          {
-            "PolicyName": {"Fn::Sub": "${Environment}-${Application}-elasticsearch-admin"},
-            "PolicyDocument": {
-              "Statement": [
-                {
-                  "Action": [
-                    "es:AddTags",
-                    "es:RemoveTags",
-                    "es:ESHttpHead",
-                    "es:DescribeElasticsearchDomain",
-                    "es:ESHttpPost",
-                    "es:ESHttpGet",
-                    "es:DescribeElasticsearchDomainConfig",
-                    "es:ESHttpDelete",
-                    "es:ESHttpPut"
-                  ],
-                  "Effect": "Allow",
-                  "Resource": {
-                    "Fn::GetAtt": ["ElasticSearchDomain", "Arn"]
-                  }
-                },
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "IAMRoleRead": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "ec2.amazonaws.com",
-                  "ecs.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
-        },
-        "Path": "/",
-        "Policies": [
-          {
-            "PolicyName": {"Fn::Sub": "${Environment}-${Application}-elasticsearch-read"},
-            "PolicyDocument": {
-              "Statement": [
-                {
-                  "Action": [
-                    "es:ESHttpGet",
-                    "es:ESHttpHead",
-                    "es:ListTags"
-                  ],
-                  "Effect": "Allow",
-                  "Resource": {
-                    "Fn::GetAtt": [
-                      "ElasticSearchDomain",
-                      "Arn"
-                    ]
-                  }
-                }
-              ]
-            }
           }
         ]
       }
