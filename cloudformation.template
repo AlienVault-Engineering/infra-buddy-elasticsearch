@@ -118,7 +118,7 @@
               "es:ESHttpDelete",
               "es:ESHttpPut"
             ],
-            "Resource": "*"
+            "Resource": {"Fn::GetAtt": ["ElasticSearchDomain", "Arn"]}
           }]
         },
         "AdvancedOptions": {
@@ -280,6 +280,28 @@
         }
       },
       "Description": "DNS CNAME for ElasticSearch Endpoint"
+    },
+    "ESSecurityGroup" : {
+      "Value" :  {
+        "Fn::GetAtt" : [
+          "ESSecurityGroup",
+          "GroupId"
+        ]
+      },
+      "Export" : {
+        "Name" : {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "StackName"
+              },
+              "-ESCluster-SecurityGroupID"
+            ]
+          ]
+        }
+      },
+      "Description" : "Aurora RDS CLuster Security Group ID"
     }
   }
 }
