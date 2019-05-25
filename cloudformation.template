@@ -118,7 +118,7 @@
               "es:ESHttpDelete",
               "es:ESHttpPut"
             ],
-            "Resource": {"Fn::GetAtt": ["ElasticSearchDomain", "Arn"]}
+            "Resource": "*"
           }]
         },
         "AdvancedOptions": {
